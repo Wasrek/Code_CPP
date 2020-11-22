@@ -75,6 +75,14 @@
         "cinttypes": "cpp",
         "complex": "cpp",
         "cwctype": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "clocale": "cpp",
+        "condition_variable": "cpp",
+        "csetjmp": "cpp",
+        "csignal": "cpp",
+        "future": "cpp",
+        "iomanip": "cpp",
+        "scoped_allocator": "cpp",
+        "typeindex": "cpp"
     }
 }
