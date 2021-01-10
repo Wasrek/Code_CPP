@@ -1,0 +1,75 @@
+-- :t type
+-- :l main.hs load main.hs
+-- :r reload
+-- \ gets input
+-- a !! 1000 get ตัวที่ 1000 ของ list a
+-- head a         tail a
+-- can defined list like [1..1000]
+ 
+mylen :: Num p => [a] -> p
+-- annouce type of func, help check the type of your func
+mylen [] =0
+mylen (x:xs) = 1 + (mylen xs)
+
+mysum[]=0
+mysum (x:xs )=x+(mysum xs)
+
+mymin [x]=x
+mymin (x:xs) =
+  let
+    mm = mymin xs
+  in
+    if x<mm
+    then x
+    else mm
+
+--myappend [1,2,3] 100 ---> [1,2,3,100]
+--myappend [] 1000 ---> [1000]
+
+myappend :: [a] -> a -> [a]
+myappend [] y = [y]
+myappend (x:xs) y = x:(myappend xs y)
+
+-- myrev [1,2,3,4,100,1000] ---> [1000,100,4,3,2,1]
+myrev [] = []
+myrev (x:xs) = myappend (myrev xs) x
+-- myrev O(n^2) (myappend O(n))
+-- T(1) = 1
+-- T(n) = cn + T(n-1) ---- T(n) = O(n^2)
+
+--merge sort
+-- splitList [1,2,3,4] --> ([1,3],[2,4])
+-- splitList [] -> ([],[])
+-- splitList [1] -> ([1],[])
+-- splitList [1,2] -> ([1],[2])
+splitList [] = ([],[])
+splitList [x] = ([x],[])
+splitList [x,y] = ([x],[y])
+splitList  (x:y:xs) = let(x1,y1) = splitList xs
+  in (x:x1, y:y1)
+
+merge [] [] = []
+merge [] ys = ys
+merge xs [] = xs
+merge (x:xs) (y:ys) = if x<=y
+  then x:(merge xs (y:ys))
+  else y:(merge (x:xs) ys)
+
+mSort [] = []
+mSort [x] = [x]
+mSort xs = let 
+    (left,right) = splitList xs
+  in merge (mSort left) (mSort right)
+
+square x = x*x
+add1 x = x+1
+-- (square . add1) 100
+-- . is compose --> fog
+-- 10201
+-- (square . add1) 100
+-- 100020001
+
+-- ff x = (x:(ff (x+1)))
+-- build infinite list
+-- you can call head but you can't call tail(infinite)
+-- cuz it's lazy eva code lang type ตอนรันเลยรันได้
