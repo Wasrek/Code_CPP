@@ -1,0 +1,8 @@
+ls list file
+cd floder_name
+chomod 000-111/-x/x z.txt
+mkdir make directory
+vi file_name vim
+g++-10(version 10) program_name.cpp -o execute_name
+./program<input.txt
+./program <input.txt > output.txt 
