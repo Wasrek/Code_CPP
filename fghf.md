@@ -22,6 +22,10 @@ Compile with C++14
 ```shell
 g++ -std=c++14 -O2 program_name.cpp -o execute_name
 ```
+Compile with C++-10
+```shell
+g++-10 program_name.cpp -o execute_name
+```
 Run program with stdin
 ```shell
 ./program< input.txt
