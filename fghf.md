@@ -18,13 +18,13 @@ Open Vim with file
 ```shell
 vi file_name 
 ```
-Compile with C++14
+Compile with g++(c++14)
 ```shell
 g++ -std=c++14 -O2 program_name.cpp -o execute_name
 ```
-Compile with C++-10
+Compile with G++-10(c++17)
 ```shell
-g++-10 program_name.cpp -o execute_name
+g++-10 -O2 -std=c++17 program_name.cpp -o execute_name
 ```
 Run program with stdin
 ```shell
