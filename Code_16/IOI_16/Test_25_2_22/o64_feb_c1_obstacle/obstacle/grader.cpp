@@ -1,0 +1,81 @@
+#include "obstacle.h"
+#include <cstdio>
+#include <vector>
+
+using namespace std;
+
+int n,m,q;
+long long dis[1010][1010],dis1[1010][1010];
+vector< vector<int >> r,c;
+// vector<int > a[100010];
+
+void initialize(int N, int M, int Q,
+		std::vector<std::vector<int>>& rowlen,
+		std::vector<std::vector<int>>& collen)
+{
+	n=N;
+	m=M;
+	q=Q;
+	r=rowlen;
+	c=collen;
+	for(int i=0;i<n;i++){
+		for(int j=0;j<m;j++){
+			if(i!=0 && j!=0){
+				dis[i][j]=min(dis[i-1][j]+c[i-1][j],dis[i][j-1]+r[i][j-1]);
+			}
+			else if(i==0 && j==0) dis[i][j]=0;
+			else if(i==0) dis[i][j]=dis[i][j-1]+r[i][j-1];
+			else if(j==0) dis[i][j]=dis[i-1][j]+c[i-1][j];
+		}
+	}
+  for(int i=n-1;i>0;i--){
+    for(int j=m;j>0;j--){
+        if(i!=n && j!=m){
+          dis1[i][j]=min(dis1[i+1][j]+c[i][j],dis1[i][j+1]+r[i][j]);
+        }
+        else if(i==n && j==m) dis1[i][j]=0;
+        else if(i==n) dis1[i][j] = dis1[i][j+1]+r[i][j];
+        else if(j==m) dis1[i][j]=dis[i+1][j]+c[i][j];
+    }
+  // }
+	// for(int i=0;i<n;i++){
+	// 	for(int j=0;j<m;j++){
+	// 		printf("%lld ",dis[i][j]);
+	// 	}
+	// 	printf("\n");
+	// }
+}
+
+int ask(int r, int c)
+{
+  long long ans=1<<18;
+  for(int i=r+1;i<n;i++){
+    ans=min(dis[i][c-1]+r[i][c-1]+r[i][c]+dis1[i][c+1],ans);
+  }
+  return (int)(ans);
+}
+
+
+
+int main() {
+  int N, M, Q;
+  scanf("%d %d %d", &N, &M, &Q);
+  vector<vector<int>> rowlen(N, vector<int>(M-1));
+  vector<vector<int>> collen(N-1, vector<int>(M));
+  for (auto &vec : rowlen) 
+    for (auto &v : vec) 
+      scanf("%d", &v);
+  for (auto &vec : collen) 
+    for (auto &v : vec) 
+      scanf("%d", &v);
+  vector<pair<int, int>> query;
+  for (int i = 0; i < Q; ++i) {
+    int r, c; scanf("%d %d", &r, &c);
+    query.emplace_back(r, c);
+  }
+  initialize(N, M, Q, rowlen, collen);
+  for (auto x : query) {
+    printf("%d\n", ask(x.first, x.second));
+  }
+}
+

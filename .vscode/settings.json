@@ -83,6 +83,7 @@
         "future": "cpp",
         "iomanip": "cpp",
         "scoped_allocator": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "stdio.h": "c"
     }
 }
