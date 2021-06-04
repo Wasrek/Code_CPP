@@ -11,28 +11,27 @@ struct A{
     int v,gr,pos;
 } arr[N];
 struct Node{
-    int prio,rev,sz,v;
-    long long sum;
+    long long prio,rev,sz,v,sum;
     struct Node *l,*r;
     Node(int idx){
         sum=v=arr[idx].v;
         rev=0;
         sz=1;
-        prio=rand();
+        prio=rand()*rand();
         l=r=NULL;
     }
 };
 struct Gr_combine{
     int cnt;
     struct Node *l=NULL,*r=NULL;
-} gr[25];
+} gr[N];
 typedef Node* pnode;
 struct chain{
     int ma,hd;
-} ch[25];
-vector< int > g[N],part[4];
-pnode root[25],b,c,a;
-int rcnt=1,pos=0,sz[N],lvl[N],pa[N][20];
+} ch[N];
+vector< int > g[N],part[3];
+pnode root[N],b,c,a;
+int rcnt=1,pos=0,sz[N],lvl[N],pa[20][N];
 long long ans=0;
 int sm(pnode t){
     return t? t->sum:0;
@@ -61,18 +60,18 @@ void merge(pnode &t,pnode l,pnode r){
     opr(t);
     return ;
 }
-void dfs(int cur,int dep){
+void dfs(int cur,int la){
     sz[cur]=1;
-    lvl[cur]=dep;
+    lvl[cur]=lvl[la]+1;
+    pa[0][cur]=la;
+    for(int i=1;i<=19;i++){
+        pa[i][cur]=pa[i-1][pa[i-1][cur]];
+    }
     for(auto &x: g[cur]){
-        if(sz[x]){
-            swap(x,g[cur][g[cur].size()-1]);
-            if(sz[x]) continue;
-        }
-        pa[x][0]=cur;
-        dfs(x,dep+1);
+        if(x==la) continue;
+        dfs(x,cur);
         sz[cur]+=sz[x];
-        if(sz[x]>sz[g[cur][0]]) swap(x,g[cur][0]);
+        if((x!=la && sz[x]>sz[g[cur][0]]) || g[cur][0]==la) swap(x,g[cur][0]);
     }
     return ;
 }
@@ -80,8 +79,8 @@ void hld(int cur){
     if(!ch[rcnt].hd) ch[rcnt].hd=cur;
     arr[cur].gr=rcnt;
     arr[cur].pos=++pos;
-    merge(root[rcnt],root[rcnt],new Node(cur));
     ch[rcnt].ma=pos;
+    merge(root[rcnt],root[rcnt],new Node(cur));
     if(!g[cur].size() || arr[g[cur][0]].gr) return ;
     hld(g[cur][0]);
 
@@ -97,12 +96,14 @@ void hld(int cur){
 int lca(int u,int v){
     if(lvl[u]<lvl[v]) swap(u,v);
     int dif=lvl[u]-lvl[v];
-    for(int i=0;i<19;i++) if(dif<<i & 1) u=pa[u][i];
+    for(int i=0;i<=19;i++){
+        if(dif>>i & 1) u=pa[i][u];
+    }
     if(u==v) return u;
     for(int i=18;i>=0;i--){
-        if(pa[u][i]!=pa[v][i]) u=pa[u][i],v=pa[v][i];
+        if(pa[i][u]!=pa[i][v]) u=pa[i][u],v=pa[i][v];
     }
-    return pa[u][0];
+    return pa[0][u];
 }
 void split(pnode t,pnode &l,pnode &r,int k){
     if(!t) return void(l=r=NULL);
@@ -116,17 +117,28 @@ void split(pnode t,pnode &l,pnode &r,int k){
 void rev_tree(int u,int v,pnode &t){
     int anc=lca(u,v);
     t=b=c=NULL;
+    if(u==v) return ;
     if(arr[u].pos>arr[v].pos) swap(u,v);
+    // printf("%d %d %d\n",u,v,anc);
     while(arr[u].gr!=arr[anc].gr){
         // head->pa(now u) + head->u
         part[0].push_back(arr[u].gr);
         gr[arr[u].gr].cnt=arr[u].pos-arr[ch[arr[u].gr].hd].pos+1;
         split(root[arr[u].gr],root[arr[u].gr],gr[arr[u].gr].r,gr[arr[u].gr].cnt);
+        //head-> u -> tail
+        //t = head-> u ->t
+        //gr[arr[u].gr].r = u->tail
         merge(t,root[arr[u].gr],t);
-        u=pa[ch[arr[u].gr].hd][0];
+        u=pa[0][ch[arr[u].gr].hd];
     }
-    // we want path oriu-> head + tail->head + tail->head
-    if(t)t->rev=1;//flip
+    // u-> head-> u-> head
+    // cout<< "first: "<<'\n';
+    // printtree(t);
+    // cout<<'\n';
+    if(t)t->rev^=1;//flip
+    // cout<< "first flip: "<<'\n';
+    // printtree(t);
+    // cout<<'\n';
     // path head->v + head-v + head-> oriv
     while(arr[v].gr!=arr[anc].gr){
         // head->pa(now u) + head->u
@@ -134,23 +146,70 @@ void rev_tree(int u,int v,pnode &t){
         gr[arr[v].gr].cnt=arr[v].pos-arr[ch[arr[v].gr].hd].pos+1;
         split(root[arr[v].gr],root[arr[v].gr],gr[arr[v].gr].r,gr[arr[v].gr].cnt);
         merge(c,root[arr[v].gr],c);
-        v=pa[ch[arr[v].gr].hd][0];
+        v=pa[0][ch[arr[v].gr].hd];
     }
-    if(arr[u].pos>arr[v].pos) swap(u,v);
+    //c = head->v + head->v
+    // cout<< "last: "<<'\n';
+    // printtree(c);
+    // cout<<'\n';
+
+    bool swp=0;
+    if(arr[u].pos>arr[v].pos) swap(u,v),swp=1;
     part[1].push_back(arr[u].gr);
     split(root[arr[u].gr],gr[arr[u].gr].l,root[arr[u].gr],arr[u].pos-arr[ch[arr[u].gr].hd].pos);
     gr[arr[u].gr].cnt=arr[v].pos-arr[u].pos+1;
     split(root[arr[u].gr],b,gr[arr[u].gr].r,gr[arr[u].gr].cnt);
+    
+    // cout<< "mid b4 swap: "<<'\n';
+    // printtree(b);
+    // cout<<'\n';
+
+    if(swp && b) b->rev^=1;
+
+    // cout<< "mid: "<<'\n';
+    // printtree(b);
+    // cout<<'\n';
+
     merge(t,t,b);
     merge(t,t,c);
 
+    // cout<< "tree: "<<'\n';
+    // printtree(t);
+    // cout<<'\n';
+
     if(t) t->rev^=1;
+    
+    // cout<< "rev tree: "<<'\n';
+    // printtree(t);
+    // cout<<'\n';
     c=NULL;
-    for(int i=0;i<3;i++)
-    for(auto x: part[i]){
-        split(t,c,t,gr[x].cnt);
-        merge(root[x],gr[x].l,c);
-        merge(root[x],root[x],gr[x].r);
+    int x;
+    // cout<< swp <<'\n';
+    for(int i=2;i>=0;i--){
+        if(i<2){
+            for(int j=part[i].size()-1;j>=0;j--){
+                x=part[i][j];
+                if(!t) continue;
+                split(t,t,c,(t->sz)-gr[x].cnt);
+                if(swp && i==1 && c) c->rev^=1; 
+                // cout<< i<< " " << j <<" "<<x<<" " <<": "<<'\n';
+                // printtree(c);
+                // cout<<'\n';
+                merge(root[x],gr[x].l,c);
+                merge(root[x],root[x],gr[x].r);
+            }
+        }else{
+            for(int j=0;j<part[i].size();j++){
+                x=part[i][j];
+                if(!t) continue;
+                split(t,t,c,(t->sz)-gr[x].cnt); 
+                // cout<< i<< " " << j <<" "<<x<<" " <<": "<<'\n';
+                // printtree(c);
+                // cout<<'\n';
+                merge(root[x],gr[x].l,c);
+                merge(root[x],root[x],gr[x].r);
+            }
+        }
     }
     part[0].clear();
     part[1].clear();
@@ -159,19 +218,23 @@ void rev_tree(int u,int v,pnode &t){
 void getsum(int u,int v){
     ans=0;
     int anc=lca(u,v);
+    // printf("%d %d %d\n",anc,u,v);
     while(arr[u].gr!=arr[anc].gr){
         gr[arr[u].gr].cnt=arr[u].pos-arr[ch[arr[u].gr].hd].pos+1;
         split(root[arr[u].gr],root[arr[u].gr],gr[arr[u].gr].r,gr[arr[u].gr].cnt);
         if(root[arr[u].gr]) ans+=root[arr[u].gr]->sum;
+        // printf("%d %d\n",arr[u].gr,root[arr[u].gr]->sum);
         merge(root[arr[u].gr],root[arr[u].gr],gr[arr[u].gr].r);
-        u=pa[ch[arr[u].gr].hd][0];
+        u=pa[0][ch[arr[u].gr].hd];
     }
     while(arr[v].gr!=arr[anc].gr){
         gr[arr[v].gr].cnt=arr[v].pos-arr[ch[arr[v].gr].hd].pos+1;
+        // printf("%d\n",gr[arr[v].gr].cnt);
         split(root[arr[v].gr],root[arr[v].gr],gr[arr[v].gr].r,gr[arr[v].gr].cnt);
         if(root[arr[v].gr]) ans+=root[arr[v].gr]->sum;
+        // printf("%d %d\n",arr[v].gr,root[arr[v].gr]->sum);
         merge(root[arr[v].gr],root[arr[v].gr],gr[arr[v].gr].r);
-        v=pa[ch[arr[v].gr].hd][0];
+        v=pa[0][ch[arr[v].gr].hd];
     }
     a=NULL;
     if(arr[u].pos>arr[v].pos) swap(u,v);
@@ -179,6 +242,7 @@ void getsum(int u,int v){
     gr[arr[u].gr].cnt=arr[v].pos-arr[u].pos+1;
     split(root[arr[u].gr],a,gr[arr[u].gr].r,gr[arr[u].gr].cnt);
     if(a) ans+=a->sum;
+    // printf("%d %d\n",arr[v].gr,a->sum);
     merge(root[arr[u].gr],gr[arr[u].gr].l,a);
     merge(root[arr[u].gr],root[arr[u].gr],gr[arr[u].gr].r);
     return ;
@@ -198,13 +262,8 @@ int main()
         g[u].push_back(v);
         g[v].push_back(u);
     }
-    dfs(1,1);
+    dfs(1,0);
     hld(1);
-    for(int i=1;i<=18;i++){
-        for(int j=1;j<=n;j++){
-            if(pa[j][i]) pa[j][i]=pa[pa[j][i-1]][i-1];
-        }
-    }
     for(int i=1;i<=q;i++){
         scanf(" %c %d %d",&c,&u,&v);
         if(c=='R'){
@@ -226,4 +285,24 @@ int main()
 S 4 3
 R 5 1
 S 3 4
+
+15 3
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+1 2
+2 3
+3 4
+4 5
+6 4
+2 7
+7 8
+7 9
+2 10
+1 11
+11 12
+12 13 
+12 14
+11 15
+S 2 12
+R 14 9
+S 8 15
 */

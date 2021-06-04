@@ -84,6 +84,7 @@
         "iomanip": "cpp",
         "scoped_allocator": "cpp",
         "typeindex": "cpp",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "climits": "cpp"
     }
 }

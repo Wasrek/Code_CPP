@@ -19,24 +19,23 @@ void dfs(int u,int la){
     p[0][u]=la;
     sz[u]=1;
     dep[u]= (la!=-1) ? dep[la]+1 : 1;
-    for(int i=0;i<g[u].size();i++){
-        if(g[u][i].i==la){
-            swap(g[u][g[u].size()-1],g[u][i]);
-        }
-        if(g[u][i].i==la && i==g[u].size()-1) continue;
-        dfs(g[u][i].i,u);
-        sz[u]+=sz[g[u][i].i];
-        if(sz[g[u][i].i] > sz[g[u][0].i]){
-            swap(g[u][i],g[u][0]);
-        }
+
+    int now = 0;
+    for (int i = 0; i < g[u].size(); i++) {
+      if (g[u][i].i == la) continue;
+      dfs(g[u][i].i, u);
+      sz[u] += sz[g[u][i].i];
+      if (sz[g[u][i].i] > sz[g[u][now].i]) now = i;
     }
+    swap(g[u][0], g[u][now]);
 }
+
 void hld(int u,int c){
-    if(!hd[idx])hd[idx]=u;
-    cha[u]=idx;
-    pos[u]=++now;
+    if(!hd[idx])hd[idx]=u;//head of the chain
+    cha[u]=idx;//chain idx
+    pos[u]=++now;//idx in seg array
     cost[now]=c;
-    arr[now]=u;
+    arr[now]=u;//seg array (main)
     if(g[u][0].i == p[0][u]) return ;
     hld(g[u][0].i,g[u][0].v);
     for(int i=1;i<g[u].size();i++){
@@ -127,7 +126,7 @@ int main()
         hld(1,0);
         build(1,n,1);
         while(1){
-            scanf("%s",str+1);
+            scanf(" %s",str+1);
             if(str[1]=='D'){
                 break;
             }else if(str[1]=='C'){
