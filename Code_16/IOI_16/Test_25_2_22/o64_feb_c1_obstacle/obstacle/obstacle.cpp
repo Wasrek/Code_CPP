@@ -1,4 +1,6 @@
+#include<bits/stdc++.h>
 #include "obstacle.h"
+#include "grader.cpp"
 using namespace std;
 
 int n,m,q;
@@ -41,13 +43,13 @@ void initialize(int N, int M, int Q,
 	// 	}
 	// 	printf("\n");
 	// }
+	}
 }
 
-int ask(int r, int c)
-{
+int ask(int rr, int cc){
   long long ans=1<<18;
-  for(int i=r+1;i<n;i++){
-    ans=min(dis[i][c-1]+r[i][c-1]+r[i][c]+dis1[i][c+1],ans);
+  for(int i=rr+1;i<n;i++){
+    ans=min(dis[i][cc-1]+r[i][cc-1]+r[i][cc]+dis1[i][cc+1],ans);
   }
   return (int)(ans);
 }

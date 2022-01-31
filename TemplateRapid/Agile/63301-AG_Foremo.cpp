@@ -1,11 +1,3 @@
-/*
-    Author	: ~Aphrodicez
-    School	: RYW
-    Lang	: CPP
-    Algo	: 
-    Status	: 
-*/
-
 #include <bits/stdc++.h>
 using namespace std;
 
