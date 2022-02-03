@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<problem revision="1" short-name="ag-foremost" url="https://polygon.codeforces.com/p8zx3GQ/Wasrek/ag-foremost">
+        
+    <judging cpu-name="Intel(R) Core(TM) i3-8100 CPU @ 3.60GHz" cpu-speed="3600" input-file="" output-file="">
+                
+        <testset name="tests">
+                        
+            <time-limit>1000</time-limit>
+                        
+            <memory-limit>268435456</memory-limit>
+                        
+            <test-count>10</test-count>
+                        
+            <input-path-pattern>tests/%02d</input-path-pattern>
+                        
+            <answer-path-pattern>tests/%02d.a</answer-path-pattern>
+                        
+            <tests>
+                                
+                <test cmd="gen 199999 199999" method="generated"/>
+                                
+                <test cmd="gen 200000 200000" method="generated"/>
+                                
+                <test cmd="gen 200000 100" method="generated"/>
+                                
+                <test cmd="gen 200000 501" method="generated"/>
+                                
+                <test cmd="gen 200000 800" method="generated"/>
+                                
+                <test cmd="gen 200000 1001" method="generated"/>
+                                
+                <test cmd="gen 200000 5000" method="generated"/>
+                                
+                <test cmd="gen 200000 10001" method="generated"/>
+                                
+                <test cmd="gen 200000 50000" method="generated"/>
+                                
+                <test cmd="gen 200000 100000" method="generated"/>
+                            
+            </tests>
+                    
+        </testset>
+            
+    </judging>
+        
+    <files>
+                
+        <resources>
+                        
+            <file path="files/olymp.sty"/>
+                        
+            <file path="files/problem.tex"/>
+                        
+            <file path="files/statements.ftl"/>
+                        
+            <file path="files/testlib.h" type="h.g++"/>
+                    
+        </resources>
+                
+        <executables>
+                        
+            <executable>
+                                
+                <source path="files/gen.cpp" type="cpp.g++17"/>
+                                
+                <binary path="files/gen.exe" type="exe.win32"/>
+                            
+            </executable>
+                    
+        </executables>
+            
+    </files>
+        
+    <assets>
+                
+        <checker name="std::wcmp.cpp" type="testlib">
+                        
+            <source path="files/check.cpp" type="cpp.g++17"/>
+                        
+            <binary path="check.exe" type="exe.win32"/>
+                        
+            <copy path="check.cpp"/>
+                        
+            <testset>
+                                
+                <test-count>0</test-count>
+                                
+                <input-path-pattern>files/tests/checker-tests/%02d</input-path-pattern>
+                                
+                <output-path-pattern>files/tests/checker-tests/%02d.o</output-path-pattern>
+                                
+                <answer-path-pattern>files/tests/checker-tests/%02d.a</answer-path-pattern>
+                                
+                <tests/>
+                            
+            </testset>
+                    
+        </checker>
+                
+        <solutions>
+                        
+            <solution tag="main">
+                                
+                <source path="solutions/AG_Foremost.cpp" type="cpp.g++17"/>
+                                
+                <binary path="solutions/AG_Foremost.exe" type="exe.win32"/>
+                            
+            </solution>
+                    
+        </solutions>
+            
+    </assets>
+        
+    <properties>
+                
+        <property name="tests-wellformed" value="true"/>
+            
+    </properties>
+        
+    <stresses>
+                
+        <stress-count>0</stress-count>
+                
+        <stress-path-pattern>stresses/%03d</stress-path-pattern>
+                
+        <list/>
+            
+    </stresses>
+    
+</problem>
